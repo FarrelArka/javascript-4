@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pembelian</title>
+  <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="input-container">
+      <h2>INPUT PENJUALAN PRODUK</h2>
+      <form id="purchase-form" action="" method="POST">
+        <div class="input-group">
+          <label for="nama">Nama Barang :</label>
+          <input type="text" id="nama" name="nama" value="" placeholder="Isi Nama anda" />
+          <span id="name-validation" class="validation"></span>
+        </div>
+        <div class="input-group">
+          <label for="jumlah">Tanggal Beli :</label>
+          <input type="date" id="date" name="tanggal" placeholder="Isi jumlah buku anda" />
+        </div>
+        <div class="input-group">
+          <label for="barang">Jumlah Barang </label>
+          <input type="number" id="barang" name="buku" placeholder="Isi jumlah buku anda" />
+        </div>
+        <div class="input-group">
+          <label for="harga">Harga Barang(Rp.) :</label>
+          <input type="number" id="harga" name="harga" placeholder="Isi harga buku anda" />
+        </div>
+        <button type="submit" id="submit-button">Beli</button>
+        <div id="error-message" class="error-message" style="display: none">
+          Silakan isi semua kolom di atas.
+        </div>
+      </form>
+    </div>
+    <div class="payment-container">
+      <h2>Result</h2>
+      <div id="payment-form">
+        <label>Nama Barang:</label>
+        <span id="Nama"></span><br /><br />
+        <label>Tanggal Beli:</label>
+        <span id="Date"></span><br /><br />
+        <label>Jumlah Barang:</label>
+        <span id="Barang"></span><br><br>
+        <label>Harga Barang:</label>
+        <span id="Harga"></span><br><br>
+        <label>Total Pembayaran:</label>
+        <span id="total-payment"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function validateProductName(name) {
+      return name.length >= 2;
+    }
+
+    function validateForm() {
+      var nama = document.getElementById("nama").value;
+      var barang = document.getElementById("barang").value;
+      var harga = document.getElementById("harga").value;
+      var nameValidation = document.getElementById("name-validation");
+      var errorMessage = document.getElementById("error-message");
+
+      if (nama === "" || barang === "" || harga === "" || !validateProductName(nama)) {
+        errorMessage.style.display = "block"; // Menampilkan pesan kesalahan hanya jika minimal satu kolom kosong
+        if (!validateProductName(nama)) {
+          nameValidation.textContent =
+            "Nama barang harus memiliki minimal 2 huruf.";
+          nameValidation.classList.add("error-message");
+          return false;
+        }
+        return false;
+      } else {
+        errorMessage.style.display = "none"; // Menghilangkan pesan kesalahan jika semua input telah diisi
+      }
+      return true;
+
+    }
+
+    document.getElementById("nama").addEventListener("keydown", function () {
+      var nameValidation = document.getElementById("name-validation");
+      nameValidation.textContent = "";
+      nameValidation.classList.remove("error-message");
+    });
+
+    document.getElementById("purchase-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      if (validateForm()) {
+        var nama = document.getElementById("nama").value;
+        var tanggal = document.getElementById("date").value;
+        var barang = document.getElementById("barang").value;
+        var harga = document.getElementById("harga").value;
+        var totalPembayaran = parseInt(barang) * parseInt(harga);
+
+        document.getElementById("Nama").textContent = nama;
+        function formatDate(tanggal) {
+          var bulanNames = [
+            "Januari",
+            "Februari",
+            "Maret",
+            "April",
+            "Mei",
+            "Juni",
+            "Juli",
+            "Agustus",
+            "September",
+            "Oktober",
+            "November",
+            "Desember",
+          ];
+          var date = new Date(tanggal);
+          var day = date.getDate();
+          var monthIndex = date.getMonth();
+          var year = date.getFullYear();
+
+          return day + " " + bulanNames[monthIndex] + " " + year;
+        }
+
+        document.getElementById("Date").textContent = formatDate(tanggal);
+        document.getElementById("Barang").textContent = barang;
+        function formatRupiah(angka) {
+          var number_string = angka.toString(),
+            sisa = number_string.length % 3,
+            rupiah = number_string.substr(0, sisa),
+            ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+          if (ribuan) {
+            separator = sisa ? "." : "";
+            rupiah += separator + ribuan.join(".");
+          }
+
+          return "Rp. " + rupiah;
+        }
+
+        document.getElementById("Harga").textContent = formatRupiah(harga);
+        document.getElementById("total-payment").textContent =
+          formatRupiah(totalPembayaran);
+        // document.getElementById("Harga").textContent = harga;
+        // document.getElementById("total-payment").textContent = "Rp " + totalPembayaran;
+
+        document.getElementById("payment-form").style.display = "block";
+      }
+    });
+  </script>
+</body>
+
+</html>
